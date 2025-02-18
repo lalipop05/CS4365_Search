@@ -127,7 +127,7 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     pq = util.PriorityQueue()
-    pq.push([problem.getStartState(), []], 0)
+    pq.push([problem.getStartState(), []], problem.costFn(problem.getStartState()))
     seen = {problem.getStartState()}
     while not pq.isEmpty(): 
         node = pq.pop()
@@ -136,7 +136,7 @@ def uniformCostSearch(problem):
             return node[1]
         for sucState in problem.getSuccessors(currentState):
             if sucState[0] not in seen:
-                pq.push([sucState[0], node[1] + [sucState[1]]], len(node[1])+1)
+                pq.push([sucState[0], node[1] + [sucState[1]]], problem.costFn(node[0])+problem.costFn(sucState[0]))
                 seen.add(sucState[0])
     return []
 
