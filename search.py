@@ -87,7 +87,7 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    
+
     stack = util.Stack()
     stack.push([problem.getStartState(), []])
     seen = {problem.getStartState()}
@@ -127,7 +127,7 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     pq = util.PriorityQueue()
-    pq.push([problem.getStartState(), []], problem.costFn(problem.getStartState()))
+    pq.push([problem.getStartState(), []], 0)
     seen = {problem.getStartState()}
     while not pq.isEmpty(): 
         node = pq.pop()
@@ -136,7 +136,7 @@ def uniformCostSearch(problem):
             return node[1]
         for sucState in problem.getSuccessors(currentState):
             if sucState[0] not in seen:
-                pq.push([sucState[0], node[1] + [sucState[1]]], problem.costFn(node[0])+problem.costFn(sucState[0]))
+                pq.push([sucState[0], node[1] + [sucState[1]]], sucState[2])
                 seen.add(sucState[0])
     return []
 
@@ -150,8 +150,9 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     pq = util.PriorityQueue()
-    pq.push([problem.getStartState(), []], problem.costFn(problem.getStartState())+heuristic(problem.getStartState(), problem))
+    pq.push([problem.getStartState(), []], 0+heuristic(problem.getStartState(), problem))
     seen = {problem.getStartState()}
     while not pq.isEmpty(): 
         node = pq.pop()
@@ -160,7 +161,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return node[1]
         for sucState in problem.getSuccessors(currentState):
             if sucState[0] not in seen:
-                pq.push([sucState[0], node[1] + [sucState[1]]], problem.costFn(node[0])+problem.costFn(sucState[0])+heuristic(sucState[0], problem))
+                pq.push([sucState[0], node[1] + [sucState[1]]], sucState[2]+heuristic(sucState[0], problem))
                 seen.add(sucState[0])
     return []
 
