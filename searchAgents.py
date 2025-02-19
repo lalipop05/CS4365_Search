@@ -371,18 +371,14 @@ def cornersHeuristic(state, problem):
     leftCorners = []
     rightCorners = []
     right = 0
-    minDist = 999999
     for innerPos in state[1]:
-        dist = abs(state[0][0] - innerPos[0]) + abs(state[0][1] - innerPos[1])
-        if (dist < minDist):
-            minDist = dist
         if (innerPos[0] == 1):
             leftCorners.append(innerPos)
         else: 
             right = innerPos[0]
             rightCorners.append(innerPos)
 
-
+    
     leftDist = -1
     if len(leftCorners) == 2:
         leftDist = abs(leftCorners[1][1] - leftCorners[0][1])
@@ -398,13 +394,13 @@ def cornersHeuristic(state, problem):
     totalDist = 0
 
     if leftDist != -1 and rightDist != -1:
-        totalDist = leftDist + rightDist + abs(rightCorners[0][0] - leftCorners[0][0]) + minDist
+        totalDist = leftDist + rightDist + right - 1
     elif leftDist == -1:
-        totalDist = rightDist + minDist
+        totalDist = rightDist
     elif rightDist == -1:
-        totalDist = leftDist + minDist
+        totalDist = leftDist
 
-    
+    print("Left: " +  str(leftCorners) + ". Right: " + str(rightCorners) + ". Dist: " + str(totalDist))
 
     "*** YOUR CODE HERE ***"
     return totalDist # Default to trivial solution
