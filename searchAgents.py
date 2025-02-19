@@ -490,16 +490,15 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    
-    count = foodGrid.count(True)
-    fg = foodGrid.deepCopy()
-    for i in range(fg.width):
-        for j in range(fg.height):
-            if (fg[i][j] == True):
-                dfsHeuristic(i,j, fg)
-                count+=1
-    
-    return count
+    problem.heuristicInfo['wallCount'] = problem.walls.count()
+    if(foodGrid.count(True) == 0):
+        return 0
+    distances = 0
+    for i in range(foodGrid.width):
+        for j in range(foodGrid.height):
+            if(foodGrid[i][j]):
+                distances += abs(position[0] - i) + abs(position[1] - j)
+    return distances / (max(foodGrid.count(True)-problem.heuristicInfo['wallCount'], 1))
 
 def dfsHeuristic(i, j, grid):
     if i < 0 or j < 0 or i >= grid.width or j >= grid.height or grid[i][j] == False:
@@ -542,7 +541,19 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        queue = util.Queue()
+        queue.push([problem.getStartState(), []])
+        seen = {problem.getStartState()}
+        while not queue.isEmpty(): 
+            node = queue.pop()
+            currentState = node[0]
+            if problem.isGoalState(currentState):
+                return node[1]
+            for sucState in problem.getSuccessors(currentState):
+                if sucState[0] not in seen:
+                    queue.push([sucState[0], node[1] + [sucState[1]]])
+                    seen.add(sucState[0])
+        return []
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -578,7 +589,9 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if(self.food[x][y]):
+            return True
+        return False
 
 def mazeDistance(point1, point2, gameState):
     """
