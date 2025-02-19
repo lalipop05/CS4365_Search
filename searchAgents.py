@@ -169,7 +169,7 @@ class PositionSearchProblem(search.SearchProblem):
 
     def isGoalState(self, state):
         isGoal = state == self.goal
-
+    
         # For display purposes only
         if isGoal and self.visualize:
             self._visitedlist.append(state)
@@ -295,14 +295,16 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (self.startingPosition, self.corners)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if (len(state[1]) == 0):
+            return True      
+        return False    
 
     def getSuccessors(self, state):
         """
@@ -314,19 +316,23 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextPos = (nextx, nexty)
+                nextCorners = state[1]
+                if nextPos in state[1]:
+                    i = state[1].index(nextPos)
+                    nextCorners = state[1][:i]+state[1][i+1:]
+                nextState = (nextPos, nextCorners)
+                successors.append( ( nextState, action, 1) )
 
-            "*** YOUR CODE HERE ***"
-
+        # Bookkeeping for display purposes
         self._expanded += 1 # DO NOT CHANGE
+
         return successors
 
     def getCostOfActions(self, actions):
