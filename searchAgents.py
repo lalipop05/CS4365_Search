@@ -490,8 +490,28 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    
+    count = foodGrid.count(True)
+    fg = foodGrid.deepCopy()
+    for i in range(fg.width):
+        for j in range(fg.height):
+            if (fg[i][j] == True):
+                dfsHeuristic(i,j, fg)
+                count+=1
+    
+    return count
+
+def dfsHeuristic(i, j, grid):
+    if i < 0 or j < 0 or i >= grid.width or j >= grid.height or grid[i][j] == False:
+        return
+    else:
+        grid[i][j] = False
+        dfsHeuristic(i+1,j,grid)
+        dfsHeuristic(i-1,j,grid)
+        dfsHeuristic(i,j+1,grid)
+        dfsHeuristic(i,j-1,grid)
+
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
