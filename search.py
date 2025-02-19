@@ -136,7 +136,7 @@ def uniformCostSearch(problem):
             return node[1]
         for sucState in problem.getSuccessors(currentState):
             if sucState[0] not in seen:
-                pq.push([sucState[0], node[1] + [sucState[1]]], sucState[2])
+                pq.push([sucState[0], node[1] + [sucState[1]]], len(node[1]) + sucState[2])
                 seen.add(sucState[0])
     return []
 
@@ -152,7 +152,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     "*** YOUR CODE HERE ***"
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     pq = util.PriorityQueue()
-    pq.push([problem.getStartState(), []], 0+heuristic(problem.getStartState(), problem))
+    pq.push([problem.getStartState(), []], heuristic(problem.getStartState(), problem))
     seen = {problem.getStartState()}
     while not pq.isEmpty(): 
         node = pq.pop()
@@ -161,7 +161,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return node[1]
         for sucState in problem.getSuccessors(currentState):
             if sucState[0] not in seen:
-                pq.push([sucState[0], node[1] + [sucState[1]]], sucState[2]+heuristic(sucState[0], problem))
+                pq.push([sucState[0], node[1] + [sucState[1]]], sucState[2]+len(node[1])+heuristic(sucState[0], problem))
                 seen.add(sucState[0])
     return []
 
