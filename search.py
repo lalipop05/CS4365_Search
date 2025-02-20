@@ -89,54 +89,51 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     stack = util.Stack()
     stack.push([problem.getStartState(), []])
-    seen = {problem.getStartState()}
+    expanded = set()
     while not stack.isEmpty(): 
         node = stack.pop()
         currentState = node[0]
         if problem.isGoalState(currentState):
             return node[1]
-        for sucState in problem.getSuccessors(currentState):
-            if sucState[0] not in seen:
+        if currentState not in expanded:
+            for sucState in problem.getSuccessors(currentState):
                 stack.push([sucState[0], node[1] + [sucState[1]]])
-                seen.add(sucState[0])
+            expanded.add(currentState)
     return []
-        
-
-    
-
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     queue = util.Queue()
     queue.push([problem.getStartState(), []])
-    seen = {problem.getStartState()}
+    expanded = set()
     while not queue.isEmpty(): 
         node = queue.pop()
         currentState = node[0]
         if problem.isGoalState(currentState):
             return node[1]
-        for sucState in problem.getSuccessors(currentState):
-            if sucState[0] not in seen:
+        if currentState not in expanded:
+            expanded.add(currentState)
+            for sucState in problem.getSuccessors(currentState):
                 queue.push([sucState[0], node[1] + [sucState[1]]])
-                seen.add(sucState[0])
+            expanded.add(currentState)
     return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     pq = util.PriorityQueue()
-    pq.push([problem.getStartState(), []], 0)
-    seen = {problem.getStartState()}
+    pq.push([problem.getStartState(), [], 0], 0)
+    expanded = set()
     while not pq.isEmpty(): 
         node = pq.pop()
         currentState = node[0]
         if problem.isGoalState(currentState):
             return node[1]
-        for sucState in problem.getSuccessors(currentState):
-            if sucState[0] not in seen:
-                pq.push([sucState[0], node[1] + [sucState[1]]], len(node[1]) + sucState[2])
-                seen.add(sucState[0])
+        if currentState not in expanded:
+            for sucState in problem.getSuccessors(currentState):
+                pq.push([sucState[0], node[1] + [sucState[1]], node[2] + sucState[2]], node[2] + sucState[2])
+            expanded.add(currentState)
     return []
 
 def nullHeuristic(state, problem=None):
@@ -149,19 +146,18 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     pq = util.PriorityQueue()
-    pq.push([problem.getStartState(), []], heuristic(problem.getStartState(), problem))
-    seen = {problem.getStartState()}
+    pq.push([problem.getStartState(), [], 0], heuristic(problem.getStartState(), problem))
+    expanded = set()
     while not pq.isEmpty(): 
         node = pq.pop()
         currentState = node[0]
         if problem.isGoalState(currentState):
             return node[1]
-        for sucState in problem.getSuccessors(currentState):
-            if sucState[0] not in seen:
-                pq.push([sucState[0], node[1] + [sucState[1]]], sucState[2]+len(node[1])+heuristic(sucState[0], problem))
-                seen.add(sucState[0])
+        if currentState not in expanded:
+            for sucState in problem.getSuccessors(currentState):
+                pq.push([sucState[0], node[1] + [sucState[1]], node[2] + sucState[2]], sucState[2]+node[2]+heuristic(sucState[0], problem))
+            expanded.add(currentState)
     return []
 
 
