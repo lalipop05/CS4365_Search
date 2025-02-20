@@ -491,25 +491,41 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     problem.heuristicInfo['wallCount'] = problem.walls.count()
-    if(foodGrid.count(True) == 0):
-        return 0
-    distances = 0
+    x = position[0]
+    y = position[1]
+    x2 = position[0]
+    y2 = position[1]
+    minDistance = 99999
+    maxDistance = 0
+    count = 0
     for i in range(foodGrid.width):
         for j in range(foodGrid.height):
-            if(foodGrid[i][j]):
-                distances += abs(position[0] - i) + abs(position[1] - j)
-    return distances / (max(foodGrid.count(True)-problem.heuristicInfo['wallCount'], 1))
+            if foodGrid[i][j]:
+                distance = myMazeDistance(position, (i, j), problem.walls, problem, foodGrid)
+                if distance < minDistance:
+                    x, y = i, j
+                    minDistance = distance
+                if distance > maxDistance:
+                    x2, y2 = i, j
+                    maxDistance = distance
+    
+    return max(myMazeDistance(position, (x, y), problem.walls, problem, foodGrid), maxDistance)
 
-def dfsHeuristic(i, j, grid):
-    if i < 0 or j < 0 or i >= grid.width or j >= grid.height or grid[i][j] == False:
-        return
-    else:
-        grid[i][j] = False
-        dfsHeuristic(i+1,j,grid)
-        dfsHeuristic(i-1,j,grid)
-        dfsHeuristic(i,j+1,grid)
-        dfsHeuristic(i,j-1,grid)
+def myMazeDistance(point1, point2, walls, problem, foodGrid):
+    """
+    Returns the maze distance between any two points, using the search functions
+    you have already built. The gameState can be any game state -- Pacman's
+    position in that state is ignored.
 
+    Example usage: mazeDistance( (2,4), (5,6), wallGrid, problem, foodGrid)
+
+    """
+    x1, y1 = point1
+    x2, y2 = point2
+    assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
+    assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+    prob = PositionSearchProblem(problem.startingGameState, start=point1, goal=point2, warn=False, visualize=False)
+    return len(search.bfs(prob))
 
 
 class ClosestDotSearchAgent(SearchAgent):
